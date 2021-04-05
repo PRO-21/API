@@ -16,3 +16,22 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+//Correspond aux URL avec le préfix ./auth
+$router->group(['prefix' => '/auth'], function () use ($router) {
+  $router->post('/', 'AuthController@authenticate');
+});
+
+//Correspond aux URL avec le préfix ./user
+$router->group(['prefix' => '/user'], function () use ($router) {
+  $router->post('/', 'UserController@addUser');
+  $router->get('/', 'UserController@getUser');
+  $router->put('/', 'UserController@editUser');
+});
+
+//Correspond aux URL avec le préfix ./cert
+$router->group(['prefix' => '/cert'], function () use ($router) {
+  $router->post('/', 'CertController@addCert');
+  $router->get('/', 'CertController@getCert');
+});
+
