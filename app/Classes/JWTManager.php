@@ -14,9 +14,10 @@ class JWTManager{
      * @param int $accountType
      * @return JSON $response
      */
-    public static function Create($email, $fullname, $accountType) {
+    public static function Create($id, $email, $fullname, $accountType) {
         $payload = [
             'iss' => "pro21-jwt", 
+            'userId' => $id,
             'email' => strtolower($email), 
             'fullname' => $fullname,
             'accountType' => $accountType,

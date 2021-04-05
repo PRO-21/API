@@ -43,6 +43,7 @@ class AuthController extends Controller {
 
             //Préparation des paramètres
             $params = [
+                $result[0]->idPersonne,
                 $result[0]->email,
                 $result[0]->prenom.' '.$result[0]->nom,
                 $result[0]->typeCompte
@@ -65,6 +66,7 @@ class AuthController extends Controller {
 
             //Préparation des paramètres
             $params = [
+                $decodedToken["data"]->userId,
                 $decodedToken["data"]->email,
                 $decodedToken["data"]->fullname,
                 $decodedToken["data"]->accountType
