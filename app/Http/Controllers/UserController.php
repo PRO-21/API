@@ -69,17 +69,17 @@ class UserController extends Controller {
             return response()->json($response, 403);
         }
 
-        if(isset($parameters['password'])) {
+        if(isset($parameters['motDePasse'])) {
             // Hasher le mot de passe
-            
+            $parameters['motDePasse'] = hash("sha512", $parameters['motDePasse']);
         }
 
-        try {
+        //try {
             DB::table('personne')->where('idPersonne', $id)->update($parameters);
-        } catch (\Exception $e){
+        /*} catch (\Exception $e){
             $response = HttpStatus::InvalidRequest400($request->getPathInfo());
             return response()->json($response, 400);
-        }
+        }*/
 
         $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
         $response = [
