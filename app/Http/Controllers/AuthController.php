@@ -34,9 +34,9 @@ class AuthController extends Controller {
                 $response = HttpStatus::NoDataFound404($request->getPathInfo());
                 return response()->json($response, 404);
             }
-
+            
             // Le mot de passe correspond ?
-            if($password !== Crypt::decrypt(($result[0]->motDePasse))) {
+            if(hash("sha512", $password) !== $result[0]->motDePasse) {
                 $response = HttpStatus::AuthenticationError401($request->getPathInfo());
                 return response()->json($response, 401);
             }
