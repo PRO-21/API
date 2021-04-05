@@ -19,14 +19,22 @@ $router->get('/', function () use ($router) {
 
 //Correspond aux URL avec le préfix ./auth
 $router->group(['prefix' => '/auth'], function () use ($router) {
-  $router->post('/', 'AuthController@authenticate');
+    $router->post('/', 'AuthController@authenticate');
 });
 
 //Correspond aux URL avec le préfix ./user
 $router->group(['prefix' => '/user'], function () use ($router) {
   $router->post('/', 'UserController@addUser');
-  $router->get('/', 'UserController@getUser');
-  $router->put('/', 'UserController@editUser');
+
+  $router->get('/{id:\d+}', [
+    'middleware' => 'jwt.UserAuth',
+    'uses' => 'UserController@getUser'
+  ]);
+
+  $router->put('/{id:\d+}', [
+    'middleware' => 'jwt.UserAuth',
+    'uses' => 'UserController@editUser'
+  ]);
 });
 
 //Correspond aux URL avec le préfix ./cert

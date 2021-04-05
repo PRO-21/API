@@ -28,7 +28,7 @@ class AuthController extends Controller {
             $password = $request->input('password');
 
             // Récupérer les infos de l'utilsateur
-            $result = DB::select("SELECT * FROM personne WHERE email = ?", [$email]);
+            $result = DB::select('SELECT * FROM personne WHERE email = ?', [$email]);
             // Il existe un utilisateur avec cet email dans la base ?
             if(count($result) == 0) {
                 $response = HttpStatus::NoDataFound404($request->getPathInfo());
@@ -66,10 +66,10 @@ class AuthController extends Controller {
 
             //Préparation des paramètres
             $params = [
-                $decodedToken["data"]->userId,
-                $decodedToken["data"]->email,
-                $decodedToken["data"]->fullname,
-                $decodedToken["data"]->accountType
+                $decodedToken['data']->userId,
+                $decodedToken['data']->email,
+                $decodedToken['data']->fullname,
+                $decodedToken['data']->accountType
             ];
         } else {
             //La valeur du paramètre auth_type est fausse
