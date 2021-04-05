@@ -37,4 +37,56 @@ class UserController extends Controller {
         ];
         return response()->json($response, 200);
     }
+
+    /**
+     * Récupère un utilisateur spécifique
+     *
+     * @param Request $request
+     * @return JSON $response
+     */
+    public function editUser(Request $request){
+        $parameters = $request->all();
+        $id = $parameters['idPersonne'];
+        unset($parameters['idPersonne']);
+
+        if(count($parameters) == 0) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo());
+            return response()->json($response, 400);
+        }
+
+        //On regarde si un utilisateur existe bien dans la bdd avec l'id du body
+        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+
+        // Il existe un utilisateur avec cet id dans la base ?
+        if(count($result) == 0) {
+            $response = HttpStatus::AuthenticationError401($request->getPathInfo());
+            return response()->json($response, 401);
+        }
+
+        // Est-ce que l'utilisateur authentifié a le droit de modifier les informations de cet utilisateur ?
+        if($result[0]->idPersonne !== $request->user->userId) {
+            $response = HttpStatus::ForbiddenAccess403($request->getPathInfo());
+            return response()->json($response, 403);
+        }
+
+        if(isset($parameters['password'])) {
+            // Hasher le mot de passe
+            
+        }
+
+        try {
+            DB::table('personne')->where('idPersonne', $id)->update($parameters);
+        } catch (\Exception $e){
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo());
+            return response()->json($response, 400);
+        }
+
+        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+        $response = [
+            'status' => HttpStatus::NoError200($request->getPathInfo()), 
+            'data' => $result, 
+            'count' =>  1
+        ];
+        return response()->json($response, 200);
+    }
 }
