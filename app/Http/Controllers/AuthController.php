@@ -14,7 +14,7 @@ class AuthController extends Controller {
      * @param Request $request
      * @return JSON $response
      */
-    public function Authenticate(Request $request) {
+    public function authenticate(Request $request) {
 
         //Authentification via login/password
         if($request->input('auth_type') == 'credentials'){

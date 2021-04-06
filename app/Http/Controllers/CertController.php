@@ -1,0 +1,65 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Classes\HttpStatus;
+use Illuminate\Support\Facades\DB;
+
+
+class CertController extends Controller {
+    /**
+     * Crée un certificat signé
+     *
+     * @param Request $request
+     * @return JSON $response
+     */
+    public function addCert(Request $request) {
+        $parameters = $request->all();
+
+        if(!isset($parameters['dateSignature'])) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
+            return response()->json($response, 400);
+        }
+
+        $certifParam = ['idPersonnePersonne' => $request->user->userId,
+                        'dateSignature' => $parameters['dateSignature']];
+
+        unset($parameters['dateSignature']);
+        // Un champ a été renseigné ?
+        if(count($parameters) == 0) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : vous n'avez pas renseigné de champs");
+            return response()->json($response, 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Création du certificat
+            DB::table('certificat')->insert($certifParam);
+            $idCertificate = DB::select('SELECT idCertificat FROM certificat where id = LAST_INSERT_ID()')[0]->idCertificat;
+
+            unset($parameters['dateSignature']);
+
+            // Ajouter les champs au certificat
+            foreach ($parameters as $key => $value) {
+                DB::table('champ')->insert(['idCertificatCertificat' => $idCertificate, 'nom' => $key, 'valeur' => $value]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo());
+            return response()->json($response, 400);
+        }
+
+        $result = DB::select('SELECT idCertificat, dateSignature, nom AS champ, valeur FROM certificat
+        INNER JOIN champ ON idCertificat = idCertificatCertificat
+        WHERE idCertificat = ?', [$idCertificate]);
+
+        $response = [
+            'status' => HttpStatus::NoError200($request->getPathInfo()), 
+            'data' => $result, 
+            'count' =>  count($result)
+        ];
+        return response()->json($response, 200);
+    }
+}

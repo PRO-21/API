@@ -25,13 +25,9 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
 
 //Correspond aux URL avec le préfix ./user
 $router->group(['prefix' => '/user'], function () use ($router) {
-    $lettersRegex = '[A-Za-z]+';
-    $digitsRegex = '\d+';
-    $emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
-        
     $router->post('/', 'UserController@addUser');
 
-    $router->get("/{id:$digitsRegex}", [
+    $router->get("/{id:\d+}", [
         'middleware' => 'jwt.UserAuth',
         'uses' => 'UserController@getUser'
     ]);
@@ -45,7 +41,11 @@ $router->group(['prefix' => '/user'], function () use ($router) {
 
 //Correspond aux URL avec le préfix ./cert
 $router->group(['prefix' => '/cert'], function () use ($router) {
-  $router->post('/', 'CertController@addCert');
-  $router->get('/', 'CertController@getCert');
+    $router->post("/", [
+        'middleware' => 'jwt.UserAuth',
+        'uses' => 'CertController@addCert'
+    ]);
+    
+    $router->get('/', 'CertController@getCert');
 });
 
