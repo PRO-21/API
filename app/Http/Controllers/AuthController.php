@@ -29,15 +29,9 @@ class AuthController extends Controller {
 
             // Récupérer les infos de l'utilsateur
             $result = DB::select('SELECT * FROM personne WHERE email = ?', [$email]);
-            // Il existe un utilisateur avec cet email dans la base ?
-            if(count($result) == 0) {
-                $response = HttpStatus::NoDataFound404($request->getPathInfo());
-                return response()->json($response, 404);
-            }
-            
-            // Le mot de passe correspond ?
-            if(hash("sha512", $password) !== $result[0]->motDePasse) {
-                $response = HttpStatus::AuthenticationError401($request->getPathInfo());
+            // Il existe un utilisateur avec cet email dans la base ? Le mot de passe correspond ?
+            if(count($result) == 0 || hash("sha512", $password) !== $result[0]->motDePasse) {
+                $response = HttpStatus::AuthenticationError401($request->getPathInfo(), " : email ou mot de passe incorrect");
                 return response()->json($response, 401);
             }
 

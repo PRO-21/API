@@ -12,22 +12,22 @@ class HttpStatus{
             "api-version" => env('APP_VERSION')
          ]; 
      }
-    public static function InvalidRequest400($path){
+    public static function InvalidRequest400($path, $extra = NULL){
         return [
              "status" => [
                  "code" => 400,
-                 "message" => "Requête invalide",
+                 "message" => "Requête invalide".$extra,
                  "request" => $path,
                  "api-version" => env('APP_VERSION')
              ],
              "data" => null
          ]; 
      }
-     public static function AuthenticationError401($path){
+     public static function AuthenticationError401($path, $extra = NULL){
         return [
              "status" => [
                  "code" => 401,
-                 "message" => "Erreur d'authentification",
+                 "message" => "Erreur d'authentification".$extra,
                  "request" => $path,
                  "api-version" => env('APP_VERSION')
              ],
