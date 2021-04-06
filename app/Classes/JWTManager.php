@@ -14,7 +14,7 @@ class JWTManager{
      * @param int $accountType
      * @return JSON $response
      */
-    public static function Create($id, $email, $fullname, $accountType) {
+    public static function create($id, $email, $fullname, $accountType) {
         $payload = [
             'iss' => "pro21-jwt", 
             'userId' => $id,
@@ -33,7 +33,7 @@ class JWTManager{
      *
      * @return JWT $token
      */
-    public static function Decode($token){
+    public static function decode($token){
         try {
             $decoded = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
         } catch (\Exception $e) {

@@ -26,7 +26,7 @@ class JWTUserMiddleware
             return response()->json($response, 401);
         }
 
-        $decoded_token = JWTManager::Decode($token);
+        $decoded_token = JWTManager::decode($token);
         //Le décode a levé une exception ?
         if($decoded_token['status'] == 400){
             $response = HttpStatus::AuthenticationError401($request->getPathInfo());

@@ -57,7 +57,7 @@ class AuthController extends Controller {
                 return response()->json($response, 401);
             }
             //Le refresh_token fourni est valide ?
-            $decodedToken = JWTManager::Decode($request->bearerToken());
+            $decodedToken = JWTManager::decode($request->bearerToken());
             //Le décode a levé une exception ?
             if($decodedToken['status'] == 400){
                 $response = HttpStatus::AuthenticationError401($request->getPathInfo());
@@ -78,7 +78,7 @@ class AuthController extends Controller {
         }
 
         //Création des JWT
-        $token = JWTManager::Create(...$params);
+        $token = JWTManager::create(...$params);
 
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
