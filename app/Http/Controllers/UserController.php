@@ -39,7 +39,7 @@ class UserController extends Controller {
     }
 
     /**
-     * Récupère un utilisateur spécifique
+     * Modifie les informations d'un utilisateur spécifique
      *
      * @param Request $request
      * @return JSON $response
@@ -76,6 +76,47 @@ class UserController extends Controller {
 
         try {
             DB::table('personne')->where('idPersonne', $id)->update($parameters);
+        } catch (\Exception $e){
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo());
+            return response()->json($response, 400);
+        }
+
+        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+        $response = [
+            'status' => HttpStatus::NoError200($request->getPathInfo()), 
+            'data' => $result, 
+            'count' =>  1
+        ];
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Crée un utilisateur
+     *
+     * @param Request $request
+     * @return JSON $response
+     */
+    public function addUser(Request $request) {
+        $parameters = $request->all();
+
+        if(!isset($parameters['motDePasse']) ||
+         isset($parameters['typeCompte']) || 
+         !isset($parameters['email'])) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
+            return response()->json($response, 400);
+        }
+
+        $parameters['typeCompte'] = 'pro';      // Type de compte par défaut
+        $parameters['email'] = strtolower($parameters['email']);
+        if (!filter_var($parameters['email'], FILTER_VALIDATE_EMAIL)) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : email incorrect");
+            return response()->json($response, 400);
+        }
+
+        $parameters['motDePasse'] = hash("sha512", $parameters['motDePasse']);
+
+        try {
+            $id = DB::table('personne')->insertGetId($parameters);
         } catch (\Exception $e){
             $response = HttpStatus::InvalidRequest400($request->getPathInfo());
             return response()->json($response, 400);
