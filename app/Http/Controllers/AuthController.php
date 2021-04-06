@@ -44,9 +44,10 @@ class AuthController extends Controller {
             //Préparation des paramètres
             $params = [
                 $result[0]->idPersonne,
-                $result[0]->email,
                 $result[0]->prenom.' '.$result[0]->nom,
-                $result[0]->typeCompte
+                $result[0]->typeCompte,
+                $result[0]->email,
+                $result[0]->motDePasse
             ];
         } else 
         // Authentification via token
@@ -67,9 +68,10 @@ class AuthController extends Controller {
             //Préparation des paramètres
             $params = [
                 $decodedToken['data']->userId,
-                $decodedToken['data']->email,
                 $decodedToken['data']->fullname,
-                $decodedToken['data']->accountType
+                $decodedToken['data']->accountType,
+                $decodedToken['data']->email,
+                $decodedToken['data']->password
             ];
         } else {
             //La valeur du paramètre auth_type est fausse

@@ -41,10 +41,11 @@ class JWTUserMiddleware
             return response()->json($response, 401);
         }
 
-        // On vérifie que le informations correspondent
-        if($decoded_token['data']->userId !== $result[0]->idPersonne || //TODO: ajouter le mot de pase hashé dans le jwt
+        // On vérifie que les informations correspondent
+        if($decoded_token['data']->userId !== $result[0]->idPersonne ||
             $decoded_token['data']->email !== $result[0]->email ||
-            $decoded_token['data']->accountType !== $result[0]->typeCompte) {
+            $decoded_token['data']->accountType !== $result[0]->typeCompte ||
+            $decoded_token['data']->password !== $result[0]->motDePasse) {
 
                 $response = HttpStatus::AuthenticationError401($request->getPathInfo());
                 return response()->json($response, 401);
