@@ -45,7 +45,7 @@ $router->group(['prefix' => '/cert'], function () use ($router) {
         'middleware' => 'jwt.UserAuth',
         'uses' => 'CertController@addCert'
     ]);
-    
-    $router->get('/', 'CertController@getCert');
+
+    $router->get('/{id}', 'CertController@getCert');
 });
 

@@ -62,4 +62,38 @@ class CertController extends Controller {
         ];
         return response()->json($response, 200);
     }
+
+    /**
+     * Récupère un certificat signé
+     *
+     * @param Request $request
+     * @param String $id
+     * @return JSON $response
+     */
+    public function getCert(Request $request, $id) {
+        // Récupérer le certificat
+        $result = DB::select('SELECT * FROM Certificat WHERE idCertificat = ?', [$id]);
+        // Il existe un certificat ?
+        if(count($result) == 0) {
+            $response = HttpStatus::NoDataFound404($request->getPathInfo());
+            return response()->json($response, 404);
+        }
+
+        // Récupérer l'utilisateur ayant créé ce certificat
+        $issuer = DB::select('SELECT prenom, nom FROM personne WHERE idPersonne = ?', [$result[0]->idPersonnePersonne]);
+        // Récupérer les champs du certificat
+        $fields = DB::select('SELECT nom, valeur FROM champ WHERE idCertificatCertificat = ?', [$id]);
+
+        $data = [ 'idCertificat' => $result[0]->idCertificat,
+                  'dateSignature' => $result[0]->dateSignature,
+                  'signataire' =>  $issuer,
+                   'champs' => $fields ];
+
+        $response = [
+            'status' => HttpStatus::NoError200($request->getPathInfo()), 
+            'data' => $data, 
+            'count' =>  1
+        ];
+        return response()->json($response, 200);
+    }
 }
