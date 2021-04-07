@@ -16,8 +16,20 @@ class CertController extends Controller {
     public function addCert(Request $request) {
         $parameters = $request->all();
 
+        // Que les utilisateurs pro peuvent créer des certificats
+        if($request->user->accountType !== 'pro') {
+            $response = HttpStatus::ForbiddenAccess403($request->getPathInfo());
+            return response()->json($response, 403);
+        }
+
         if(!isset($parameters['dateSignature'])) {
             $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
+            return response()->json($response, 400);
+        }
+
+        // Vérification du format de la date
+        if(!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $parameters['dateSignature'])) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : la date doit être au format yyyy-mm-dd");
             return response()->json($response, 400);
         }
 

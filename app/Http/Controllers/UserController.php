@@ -49,6 +49,11 @@ class UserController extends Controller {
         $id = $parameters['idPersonne'];
         unset($parameters['idPersonne']);
 
+        // On ne peut pas modifier le type de compte
+        if(isset($parameters['typeCompte'])) {
+            unset($parameters['typeCompte']);
+        }
+
         if(count($parameters) == 0) {
             $response = HttpStatus::InvalidRequest400($request->getPathInfo());
             return response()->json($response, 400);
