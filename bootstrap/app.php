@@ -73,7 +73,7 @@ $app->configure('app');
 */
 
 $app->routeMiddleware([
-    'jwt.UserAuth' => App\Http\Middleware\JwtUserMiddleware::class,
+    'jwt.UserAuth' => App\Http\Middleware\JWTUserMiddleware::class,
 ]);
 
 
