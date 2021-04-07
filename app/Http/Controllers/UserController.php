@@ -16,7 +16,7 @@ class UserController extends Controller {
      */
     public function getUser(Request $request, $id){
         // Récupérer les infos de l'utilsateur
-        $result = DB::select('SELECT idPersonne, prenom, nom, adresse, npa, typeCompte, email FROM personne WHERE idPersonne = ?', [$id]);
+        $result = DB::select('SELECT idPersonne, prenom, nom, adresse, npa, typeCompte, email FROM Personne WHERE idPersonne = ?', [$id]);
         // Il existe un utilisateur avec cet email dans la base ?
         if(count($result) == 0) {
             $response = HttpStatus::NoDataFound404($request->getPathInfo());
@@ -60,7 +60,7 @@ class UserController extends Controller {
         }
 
         //On regarde si un utilisateur existe bien dans la bdd avec l'id du body
-        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
 
         // Il existe un utilisateur avec cet id dans la base ?
         if(count($result) == 0) {
@@ -80,13 +80,13 @@ class UserController extends Controller {
         }
 
         try {
-            DB::table('personne')->where('idPersonne', $id)->update($parameters);
+            DB::table('Personne')->where('idPersonne', $id)->update($parameters);
         } catch (\Exception $e){
             $response = HttpStatus::InvalidRequest400($request->getPathInfo());
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 
@@ -121,13 +121,13 @@ class UserController extends Controller {
         $parameters['motDePasse'] = hash("sha512", $parameters['motDePasse']);
 
         try {
-            $id = DB::table('personne')->insertGetId($parameters);
+            $id = DB::table('Personne')->insertGetId($parameters);
         } catch (\Exception $e){
             $response = HttpStatus::InvalidRequest400($request->getPathInfo());
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$id]);
+        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 

@@ -33,7 +33,7 @@ class JWTUserMiddleware
             return response()->json($response, 401);
         }
         //On regarde si un utilisateur existe bien dans la bdd avec l'id du jwt et si le type de compte est le bon
-        $result = DB::select('SELECT * FROM personne WHERE idPersonne = ?', [$decoded_token['data']->userId]);
+        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$decoded_token['data']->userId]);
 
         // Il existe un utilisateur avec cet id dans la base ?
         if(count($result) == 0) {

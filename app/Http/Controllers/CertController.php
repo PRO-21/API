@@ -46,14 +46,14 @@ class CertController extends Controller {
         DB::beginTransaction();
         try {
             // Création du certificat
-            DB::table('certificat')->insert($certifParam);
-            $idCertificate = DB::select('SELECT idCertificat FROM certificat where id = LAST_INSERT_ID()')[0]->idCertificat;
+            DB::table('Certificat')->insert($certifParam);
+            $idCertificate = DB::select('SELECT idCertificat FROM Certificat where id = LAST_INSERT_ID()')[0]->idCertificat;
 
             unset($parameters['dateSignature']);
 
             // Ajouter les champs au certificat
             foreach ($parameters as $key => $value) {
-                DB::table('champ')->insert(['idCertificatCertificat' => $idCertificate, 'nom' => $key, 'valeur' => $value]);
+                DB::table('Champ')->insert(['idCertificatCertificat' => $idCertificate, 'nom' => $key, 'valeur' => $value]);
             }
 
             DB::commit();
@@ -63,8 +63,8 @@ class CertController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT idCertificat, dateSignature, nom AS champ, valeur FROM certificat
-        INNER JOIN champ ON idCertificat = idCertificatCertificat
+        $result = DB::select('SELECT idCertificat, dateSignature, nom AS Champ, valeur FROM Certificat
+        INNER JOIN Champ ON idCertificat = idCertificatCertificat
         WHERE idCertificat = ?', [$idCertificate]);
 
         $response = [
@@ -92,9 +92,9 @@ class CertController extends Controller {
         }
 
         // Récupérer l'utilisateur ayant créé ce certificat
-        $issuer = DB::select('SELECT prenom, nom FROM personne WHERE idPersonne = ?', [$result[0]->idPersonnePersonne]);
+        $issuer = DB::select('SELECT prenom, nom FROM Personne WHERE idPersonne = ?', [$result[0]->idPersonnePersonne]);
         // Récupérer les champs du certificat
-        $fields = DB::select('SELECT nom, valeur FROM champ WHERE idCertificatCertificat = ?', [$id]);
+        $fields = DB::select('SELECT nom, valeur FROM Champ WHERE idCertificatCertificat = ?', [$id]);
 
         $data = [ 'idCertificat' => $result[0]->idCertificat,
                   'dateSignature' => $result[0]->dateSignature,
