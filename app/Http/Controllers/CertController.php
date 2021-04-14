@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Classes\HttpStatus;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class CertController extends Controller {
     /**
@@ -47,13 +48,12 @@ class CertController extends Controller {
         try {
             // Création du certificat
             DB::table('Certificat')->insert($certifParam);
-            $idCertificate = DB::select('SELECT idCertificat FROM Certificat where id = LAST_INSERT_ID()')[0]->idCertificat;
-
+            $idCertificate = DB::table('Certificat')->select('idCertificat')->where('id', '=', DB::getPdo()->lastInsertId())->get()->first()->idCertificat;
             unset($parameters['dateSignature']);
 
             // Ajouter les champs au certificat
             foreach ($parameters as $key => $value) {
-                DB::table('Champ')->insert(['idCertificatCertificat' => $idCertificate, 'nom' => $key, 'valeur' => $value]);
+                DB::table('Champ')->insert(['idCertificatCertificat' => $idCertificate, 'nom' => $key, 'valeur' => Crypt::encrypt($value)]);
             }
 
             DB::commit();
@@ -63,16 +63,7 @@ class CertController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT idCertificat, dateSignature, nom AS Champ, valeur FROM Certificat
-        INNER JOIN Champ ON idCertificat = idCertificatCertificat
-        WHERE idCertificat = ?', [$idCertificate]);
-
-        $response = [
-            'status' => HttpStatus::NoError200($request->getPathInfo()), 
-            'data' => $result, 
-            'count' =>  count($result)
-        ];
-        return response()->json($response, 200);
+        return $this->getCert($request, $idCertificate);
     }
 
     /**
@@ -84,7 +75,7 @@ class CertController extends Controller {
      */
     public function getCert(Request $request, $id) {
         // Récupérer le certificat
-        $result = DB::select('SELECT * FROM Certificat WHERE idCertificat = ?', [$id]);
+        $result = DB::table('Certificat')->select()->where('idCertificat', '=', $id)->get();
         // Il existe un certificat ?
         if(count($result) == 0) {
             $response = HttpStatus::NoDataFound404($request->getPathInfo());
@@ -92,9 +83,19 @@ class CertController extends Controller {
         }
 
         // Récupérer l'utilisateur ayant créé ce certificat
-        $issuer = DB::select('SELECT prenom, nom FROM Personne WHERE idPersonne = ?', [$result[0]->idPersonnePersonne]);
+        $issuer = DB::table('Personne')->select('prenom', 'nom')->where('idPersonne', '=', $result[0]->idPersonnePersonne)->get()->first();
         // Récupérer les champs du certificat
-        $fields = DB::select('SELECT nom, valeur FROM Champ WHERE idCertificatCertificat = ?', [$id]);
+        $fields = DB::table('Champ')->select('nom', 'valeur')->where('idCertificatCertificat', '=', $id)->get();
+
+        // Pour chaque champs récupéré, déchiffrer sa valeur
+        foreach($fields as $field) {
+            try {
+                $field->valeur = Crypt::decrypt($field->valeur);
+            } catch (DecryptException $e) {
+                $response = HttpStatus::InvalidRequest400($request->getPathInfo());
+                return response()->json($response, 400);
+            }
+        }
 
         $data = [ 'idCertificat' => $result[0]->idCertificat,
                   'dateSignature' => $result[0]->dateSignature,
