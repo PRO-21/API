@@ -452,30 +452,34 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                 "status": {
                     "code": 200,
                     "message": "OK",
-                    "request": "/cert/",
+                    "request": "/cert/Y0Ez39NKLZ",
                     "api-version": "1.0"
                 },
-                "data": [
-                    {
-                        "idCertificat": "Y0Ez39NKLZ",
-                        "dateSignature": "2021-04-07",
-                        "champ": "date_du_test",
-                        "valeur": "05.05.2021"
-                    },
-                    {
-                        "idCertificat": "Y0Ez39NKLZ",
-                        "dateSignature": "2021-04-07",
-                        "champ": "Lieu_du_test",
-                        "valeur": "Hôpital Pourtales"
-                    },
-                    {
-                        "idCertificat": "Y0Ez39NKLZ",
-                        "dateSignature": "2021-04-07",
-                        "champ": "résultat_du_test",
-                        "valeur": "NÉGATIF"
-                    }
-                ],
-                "count": 3
+                "data": {
+                    "idCertificat": "Y0Ez39NKLZ",
+                    "dateSignature": "2021-04-07",
+                    "signataire": [
+                        {
+                            "prenom": "Jean",
+                            "nom": "Dupont"
+                        }
+                    ],
+                    "champs": [
+                        {
+                            "nom": "date_du_test",
+                            "valeur": "05.05.2021"
+                        },
+                        {
+                            "nom": "Lieu_du_test",
+                            "valeur": "Hôpital Pourtales"
+                        },
+                        {
+                            "nom": "résultat_du_test",
+                            "valeur": "NÉGATIF"
+                        }
+                    ]
+                },
+                "count": 1
             }
 			
 + Response 400 (application/json)
