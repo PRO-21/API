@@ -23,7 +23,7 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// $app->withFacades();
+$app->withFacades();
 
 // $app->withEloquent();
 
@@ -71,6 +71,11 @@ $app->configure('app');
 | route or middleware that'll be assigned to some specific routes.
 |
 */
+
+$app->routeMiddleware([
+    'jwt.UserAuth' => App\Http\Middleware\JWTUserMiddleware::class,
+]);
+
 
 // $app->middleware([
 //     App\Http\Middleware\ExampleMiddleware::class

@@ -1,0 +1,616 @@
+FORMAT: 1A
+HOST: https://pro.simeunovic.ch:8022/protest/api
+
+# API PRO21
+
+# Introduction
+
+API permettant à une autre application d'authentifier un utilisateur et de récupérer les informations des certificats.
+
+### Système d'authentification
+L'application utilise des tokens d'accès [JWT](https://jwt.io/) pour l'authentification. Ces tokens sont valables une semaine et sont délivrés lors de l'authentification de l'utilisateur. Certaines requêtes à l'API douvent contenir une en-tête **Authorization** avec la valeur **Bearer token**. Exemple :
+
+```HTTP
+POST /api/auth
+Host: pro.simeunovic.ch:8022
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+cache-control: no-cache
+```
+
+Si l'on examine le contenu d'un JWT délivré par l'API, on obtient ceci :
+
+![name](https://pro.simeunovic.ch:8022/protest/api-doc/img/example.png)
+
+Ainsi, une application utilisant l'API a toujours l'information de l'identité de l'utilisateur en cours.
+
+# Group Authentification
+
+Resources relatives à l'authentification.
+
+## Authentification via identifiants [/auth]
+### Récupère un token [POST]
+Permet d'obtenir un token à partir d'un login et mot de passe. Les identifiants doivent appartenir à un utilisateur enregistré dans la bdd.
+
++ `auth_type` (required, string) - type d'authentification. Pour une authentification avec identifiants, sa valeur peut être uniquement `credentials`
++ `email` (required, string) - adresse email
++ `password` (required, string) - mot de passe
+
++ Request with body (application/json)
+
+    + Body
+
+			{
+                "auth_type": "credentials",
+                "email": "jean.dupontel@gmail.com",
+                "password": "pass",
+            }
+
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /auth
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/auth",
+                    "api-version": "1.0"
+                },
+                "data": {
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8"
+                }
+            }
+			
++ Response 400 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 400,
+				"message": "Requête invalide",
+				"request": "/api/auth",
+				"api-version": "1.0"
+			  },
+			  "data": null
+			}		
+
++ Response 401 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 401,
+				"message": "Erreur d'authentification : email ou mot de passe incorrect",
+				"request": "/api/auth",
+				"api-version": "1.0"
+			  },
+			  "data": null
+			}		
+			
+## Authentification via token [/auth]
+### Récupère un token [POST]
+Permet d'obtenir un nouveau token à partir d'un token existant. Utilisé lorsque le token est expiré (après une semaine).
+
++ `auth_type` (required, string) - type d'authentification. Dans le cas d'un renouvellement de token, sa valeur peut être uniquement de `token`   
+
++ Request with body (application/json)
+	
+	+ Headers
+
+            Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+	
+    + Body
+
+			{
+                "auth_type": "token"
+            }
+			
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /auth
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/auth",
+                    "api-version": "1.0"
+                },
+                "data": {
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgzMTM4LCJleHAiOjE2MTgzODc5Mzh9.05oz6hrQ5DJUyNblySYMcK5EgRwAoBUQIxoP2Y2Y4k8"
+                }
+            }
+
++ Response 401 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 401,
+				"message": "Erreur d'authentification",
+				"request": "/api/auth",
+				"api-version": "1.0"
+			  },
+			  "data": null
+			}
+
+# Group Utilisateur
+
+Resources relatives aux contrôles sur les utilisateurs.
+
+## Récupération des informations pour l'utilsateur spécifié [/user/{id}]
+
++ Parameters
+
+    + id: `1` (required, int) - id de l'utilisateur dont on veut récupérer les informations
+
+### Récupère un utilisateur [GET]
+Permet de récupérer des informations pour l'utilsateur spécifié en paramètre.
+::: warning
+L'utilisateur authentifié dans le token doit être le même que l'id spécifié en paramètre. Autrement dit, un utilisateur ne peut récupérer que ses propres infromations.
+:::
+
++ Request
+
+	+ Headers
+
+            Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /user
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/user/1",
+                    "api-version": "1.0"
+                },
+                "data": {
+                    "idPersonne": 1,
+                    "prenom": "Jean",
+                    "nom": "Dupont",
+                    "adresse": "Rue de la Baie 23",
+                    "npa": "3001",
+                    "typeCompte": "pro",
+                    "email": "jean.dupontel@gmail.com"
+                },
+                "count": 1
+            }
+
++ Response 403 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 403,
+				"message": "Accès interdit",
+				"request": "/api/user/2",
+				"api-version": "1"
+			  },
+			  "data": null
+			}			
+			
++ Response 404 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 404,
+				"message": "Aucune information trouvée",
+				"request": "/api/user/2",
+				"api-version": "1"
+			  },
+			  "data": null
+			}
+
+## Création d'un utilisateur [/user/]
+### Crée un utilisateur [POST]
+
+L'API attribue automatiquement le type de compte (pro dans l'itération 1).
+
++ Request with body (application/json)
+		
+    + Body
+
+			{
+                "prenom": "Albert",
+                "nom": "Dupontel",
+                "adresse": "Rue de la Côte 56",
+                "npa": "2000",
+                "email": "albert.dupontel@bluewin.ch",
+                "motDePasse": "pass"
+            }
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /user
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": [
+                    {
+                        "idPersonne": 3,
+                        "prenom": "Albert",
+                        "nom": "Dupontel",
+                        "adresse": "Rue de la Côte 56",
+                        "npa": "2000",
+                        "typeCompte": "pro",
+                        "email": "albert.dupontel@bluewin.ch",
+                        "motDePasse": "5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25"
+                    }
+                ],
+                "count": 1
+            }
+			
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : il manque un ou des paramètre(s)",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }
+
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : email incorrect",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }
+
+## Modification d'un utilisateur [/user/]
+### Modifie un utilisateur spécifique [PUT]
+Les champs dans le Body peuvent être variable. On indique dans le body que les champs qui seront modifiés Par exemple, si un utilisateur souhaite mettre à jour son adresse, il faut indiquer dans le body `idPersonne` et `adresse`.
+Le premier champ dans Body doit être `idPersonne` (obligatoire) avec comme valeur un entier représentant l'id de l'utilisateur dans la bdd.
+Les champs permis dans le body sont les suivants :
+- `idPersonne`
+- `prenom`
+- `nom`
+- `adresse`
+- `npa`
+- `email`
+- `motDePasse`
+
+::: warning
+La modification des informations `email` ou `motDePasse` entraine la non validité du token en cours. Cela signifie que si un de ces deux champs est modifié, il faudra que l'utilisateur s'authentifie à nouveau.
+:::
+
+::: warning
+L'utilisateur authentifié dans le token doit être le même que l'id spécifié en paramètre. Autrement dit, un utilisateur ne peut modifier que ses propres infromations.
+:::
+
++ Request with body (application/json)
+
+	+ Headers
+
+            Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+
+    + Body
+
+			{
+                "idPersonne": "1",
+                "adresse": "Rue de la Côte 18"
+            }
+
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /user
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": [
+                    {
+                        "idPersonne": 1,
+                        "prenom": "Jean",
+                        "nom": "Dupont",
+                        "adresse": "Rue de la Côte 18",
+                        "npa": "3001",
+                        "typeCompte": "pro",
+                        "email": "jean.dupontel@gmail.com",
+                        "motDePasse": "5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25"
+                    }
+                ],
+                "count": 1
+            }
+
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }
+
++ Response 401 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 401,
+				"message": "Erreur d'authentification",
+				"request": "/api/user",
+				"api-version": "1"
+			  },
+			  "data": null
+			}		
+
++ Response 403 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 403,
+				"message": "Accès interdit",
+				"request": "/api/user",
+				"api-version": "1"
+			  },
+			  "data": null
+			}			
+			
+# Group Certificat
+
+Resources relatives aux certificats.
+
+## Création d'un certificat [/cert/]
+
+### Crée un certificat [POST]
+Permet de créer un certificat avec une date et des champs format clé => valeur. 
+
+::: warning
+L'utilisateur authentifié dans le token doit avoir un type de compte "pro" pour pouvoir créer des certificats
+:::
+
+::: warning
+Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm-dd
+:::
+
++ Request with body (application/json)
+
+	+ Headers
+
+            Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+
+    + Body
+
+			{
+                "dateSignature": "2021-04-07",
+                "date du test": "05.05.2021",
+                "résultat du test" : "NÉGATIF",
+                "Lieu du test" : "Hôpital Pourtales" 
+            }
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /cert/
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/cert/",
+                    "api-version": "1.0"
+                },
+                "data": [
+                    {
+                        "idCertificat": "Y0Ez39NKLZ",
+                        "dateSignature": "2021-04-07",
+                        "champ": "date_du_test",
+                        "valeur": "05.05.2021"
+                    },
+                    {
+                        "idCertificat": "Y0Ez39NKLZ",
+                        "dateSignature": "2021-04-07",
+                        "champ": "Lieu_du_test",
+                        "valeur": "Hôpital Pourtales"
+                    },
+                    {
+                        "idCertificat": "Y0Ez39NKLZ",
+                        "dateSignature": "2021-04-07",
+                        "champ": "résultat_du_test",
+                        "valeur": "NÉGATIF"
+                    }
+                ],
+                "count": 3
+            }
+			
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : il manque un ou des paramètre(s)",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }	
+
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : la date doit être au format yyyy-mm-dd",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }	
+
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : vous n'avez pas renseigné de champs",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }	
+
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide",
+                    "request": "/user/",
+                    "api-version": "1.0"
+                },
+                "data": null
+            }	
+
+## Récupération des informations d'un certificat [/cert/{id}]
++ Parameters
+
+    + id: `Y0Ez39NKLZ` (required, string) - id du certificat
+
+### Récupère les informations d'un certificat [GET]
+
+Utilisé lors du scan d'un document.
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /cert
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/cert/Y0Ez39NKLZ",
+                    "api-version": "1.0"
+                },
+                "data": {
+                    "idCertificat": "Y0Ez39NKLZ",
+                    "dateSignature": "2021-04-07",
+                    "signataire": [
+                        {
+                            "prenom": "Jean",
+                            "nom": "Dupont"
+                        }
+                    ],
+                    "champs": [
+                        {
+                            "nom": "date_du_test",
+                            "valeur": "05.05.2021"
+                        },
+                        {
+                            "nom": "Lieu_du_test",
+                            "valeur": "Hôpital Pourtales"
+                        },
+                        {
+                            "nom": "résultat_du_test",
+                            "valeur": "NÉGATIF"
+                        }
+                    ]
+                },
+                "count": 1
+            }
+			
+			
++ Response 404 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 404,
+				"message": "Aucune information trouvée",
+				"request": "/api/cert/wrongid",
+				"api-version": "1"
+			  },
+			  "data": null
+			}
+
+# Group Erreurs
+
+### Codes d'erreur possibles et leur cause probable
+
+| Code| Signification | Cause possible |
+| ------ | ------ | ------ |
+| 200 | Aucune erreur, *data* contient les données | |
+| 400| Requête invalide  | Il manque le ou des paramètres requis à la requête, le chemin n'est pas correct |
+| 401| Erreur d'authentification  | Le token est invalide ou non fourni dans le Header |
+| 403| Accès interdit  | La tâche n'appartient pas au user fourni en paramètre |
+| 404| Aucune information trouvée  | Le ou les paramètres fournis (user p.ex.) ne conduisent à aucune données dans le système | 
+| 500| Service indisponible |  | 
+
+En cas d'erreur: `data` sera null.

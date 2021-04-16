@@ -14,5 +14,38 @@
 */
 
 $router->get('/', function () use ($router) {
+    echo hash("sha512", "pass");
     return $router->app->version();
 });
+
+//Correspond aux URL avec le préfix ./auth
+$router->group(['prefix' => '/auth'], function () use ($router) {
+    $router->post('/', 'AuthController@authenticate');
+});
+
+//Correspond aux URL avec le préfix ./user
+$router->group(['prefix' => '/user'], function () use ($router) {
+    $router->post('/', 'UserController@addUser');
+
+    $router->get("/{id:\d+}", [
+        'middleware' => 'jwt.UserAuth',
+        'uses' => 'UserController@getUser'
+    ]);
+
+    // id, prenom, nom, adresse, npa, typeCompte, email, [password]
+    $router->put("/", [
+        'middleware' => 'jwt.UserAuth',
+        'uses' => 'UserController@editUser'
+    ]);
+});
+
+//Correspond aux URL avec le préfix ./cert
+$router->group(['prefix' => '/cert'], function () use ($router) {
+    $router->post("/", [
+        'middleware' => 'jwt.UserAuth',
+        'uses' => 'CertController@addCert'
+    ]);
+
+    $router->get('/{id}', 'CertController@getCert');
+});
+
