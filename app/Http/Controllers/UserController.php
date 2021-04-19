@@ -118,6 +118,13 @@ class UserController extends Controller {
             return response()->json($response, 400);
         }
 
+        // Tester qu'il n'existe pas déjà un utilisateur avec l'email
+        $result = DB::table('Personne')->select()->where("email", "=",  $parameters['email'])->get();
+        if(count($result) > 0) {
+            $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : cet email est déjà utilisé");
+            return response()->json($response, 400);
+        }
+
         $parameters['motDePasse'] = hash("sha512", $parameters['motDePasse']);
 
         try {
@@ -127,7 +134,7 @@ class UserController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
+        $result = DB::table('Personne')->select()->where("idPersonne", "=", $id)->get();
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 
