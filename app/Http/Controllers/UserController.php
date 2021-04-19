@@ -106,7 +106,11 @@ class UserController extends Controller {
 
         if(!isset($parameters['motDePasse']) ||
          isset($parameters['typeCompte']) || 
-         !isset($parameters['email'])) {
+         !isset($parameters['email']) ||
+         !isset($parameters['prenom']) || 
+         !isset($parameters['nom']) ||
+         !isset($parameters['adresse']) ||
+         !isset($parameters['npa'])) {
             $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
             return response()->json($response, 400);
         }
