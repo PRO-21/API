@@ -14,7 +14,6 @@
 */
 
 $router->get('/', function () use ($router) {
-    echo hash("sha512", "pass");
     return $router->app->version();
 });
 
