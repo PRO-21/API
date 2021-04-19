@@ -301,6 +301,20 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                 "data": null
             }
 
++ Response 400 (application/json)
+	
+    + Body
+
+            {
+                "status": {
+                    "code": 400,
+                    "message": "Requête invalide : cet email est déjà utilisé",
+                    "request": "/user/",
+                    "api-version": "1.1"
+                },
+                "data": null
+            }
+
 ## Modification d'un utilisateur [/user/]
 ### Modifie un utilisateur spécifique [PUT]
 Les champs dans le Body peuvent être variable. On indique dans le body que les champs qui seront modifiés Par exemple, si un utilisateur souhaite mettre à jour son adresse, il faut indiquer dans le body `idPersonne` et `adresse`.
