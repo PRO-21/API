@@ -139,4 +139,8 @@ class UserTest extends TestCase
             'data' => NULL,
           ]);
     }
+
+    public function testEditUser() {
+
+    }
 }
