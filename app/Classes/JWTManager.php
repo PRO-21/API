@@ -14,18 +14,15 @@ class JWTManager{
      * @param int $accountType
      * @return JSON $response
      */
-    public static function create($id, $fullname, $accountType, $email, $password) {
+    public static function create($id, $fullname) {
         $payload = [
             'iss' => "pro21-jwt", 
             'userId' => $id,
             'fullname' => $fullname,
-            'accountType' => $accountType,
-            'email' => strtolower($email), 
-            'password' => $password,
             'iat' => time(), //date d'émission du JWT
         ];
         
-        $payload['exp'] = time() + 60*60*24*7/*1sem*/;
+        $payload['exp'] = time() + 60*60*24 /*1 jour*/;
         return JWT::encode($payload, env('JWT_SECRET'));
     } 
 
