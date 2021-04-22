@@ -32,7 +32,7 @@ $router->group(['prefix' => '/user'], function () use ($router) {
     ]);
 
     // id, prenom, nom, adresse, npa, typeCompte, email, [password]
-    $router->put("/", [
+    $router->patch("/", [
         'middleware' => 'jwt.UserAuth',
         'uses' => 'UserController@editUser'
     ]);

@@ -16,7 +16,11 @@ class UserController extends Controller {
      */
     public function getUser(Request $request, $id){
         // Récupérer les infos de l'utilsateur
-        $result = DB::select('SELECT idPersonne, prenom, nom, adresse, npa, typeCompte, email FROM Personne WHERE idPersonne = ?', [$id]);
+        $result = DB::table('Personne')
+        ->select('idPersonne', 'prenom', 'nom', 'adresse', 'npa', 'typeCompte', 'email', 'idPays', 'nomPays', 'code AS codePays')
+        ->join('Pays', 'idPersonnePays', '=', 'idPays')
+        ->where("idPersonne", "=", $id)->get();
+
         // Il existe un utilisateur avec cet email dans la base ?
         if(count($result) == 0) {
             $response = HttpStatus::NoDataFound404($request->getPathInfo());
@@ -110,7 +114,8 @@ class UserController extends Controller {
          !isset($parameters['prenom']) || 
          !isset($parameters['nom']) ||
          !isset($parameters['adresse']) ||
-         !isset($parameters['npa'])) {
+         !isset($parameters['npa']) ||
+         !isset($parameters['idPersonnePays'])) {
             $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
             return response()->json($response, 400);
         }
@@ -138,7 +143,11 @@ class UserController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::table('Personne')->select()->where("idPersonne", "=", $id)->get();
+        $result = DB::table('Personne')
+        ->select('idPersonne', 'prenom', 'nom', 'adresse', 'npa', 'typeCompte', 'email', 'idPays', 'nomPays', 'code AS codePays')
+        ->join('Pays', 'idPersonnePays', '=', 'idPays')
+        ->where("idPersonne", "=", $id)->get();
+
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 
