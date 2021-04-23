@@ -17,8 +17,11 @@ class CertController extends Controller {
     public function addCert(Request $request) {
         $parameters = $request->all();
 
+        // Récupérer les infos de l'utilisateur
+        $response = DB::table('Personne')->select('typeCompte')->where('idPersonne', '=', $request->user->userId)->get();
+        
         // Que les utilisateurs pro peuvent créer des certificats
-        if($request->user->accountType !== 'pro') {
+        if($response[0]->typeCompte !== 'pro') {
             $response = HttpStatus::ForbiddenAccess403($request->getPathInfo());
             return response()->json($response, 403);
         }
