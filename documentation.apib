@@ -623,6 +623,103 @@ Utilisé lors du scan d'un document.
 			  "data": null
 			}
 
+# Group Pays
+
+Resources relatives aux pays.
+
+## Récupération des pays [/country/]
+
+### Récupérer des pays [GET]
+Permet de récupérer tous les pays.
+
++ Request
+
+	+ Headers
+
+            Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /country
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/country",
+                    "api-version": "1.1"
+                },
+                "data": [
+                    {
+                        "idPays": "ABW",
+                        "nomPays": "Aruba",
+                        "code": "AW"
+                    },
+                    {
+                        "idPays": "AFG",
+                        "nomPays": "Afghanistan",
+                        "code": "AF"
+                    },
+                    {
+                        "idPays": "AGO",
+                        "nomPays": "Angola",
+                        "code": "AO"
+                    },
+                    {
+                        "idPays": "AIA",
+                        "nomPays": "Anguilla",
+                        "code": "AI"
+                    },
+                    {
+                        "idPays": "ALA",
+                        "nomPays": "Åland",
+                        "code": "AX"
+                    },
+                    {
+                        "idPays": "ALB",
+                        "nomPays": "Albania",
+                        "code": "AL"
+                    },
+                    ...
+                    {
+                        "idPays": "ZAF",
+                        "nomPays": "South Africa",
+                        "code": "ZA"
+                    },
+                    {
+                        "idPays": "ZMB",
+                        "nomPays": "Zambia",
+                        "code": "ZM"
+                    },
+                    {
+                        "idPays": "ZWE",
+                        "nomPays": "Zimbabwe",
+                        "code": "ZW"
+                    }
+                ],
+                "count": 250
+            }
+
++ Response 401 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 401,
+				"message": "Erreur d'authentification",
+                "request": "/country",
+				"api-version": "1.2"
+			  },
+			  "data": null
+			}
+
+
 # Group Erreurs
 
 ### Codes d'erreur possibles et leur cause probable

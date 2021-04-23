@@ -48,3 +48,12 @@ $router->group(['prefix' => '/cert'], function () use ($router) {
     $router->get('/{id}', 'CertController@getCert');
 });
 
+//Correspond aux URL avec le préfix ./pays
+$router->group(['prefix' => '/country'], function () use ($router) {
+    $router->get("/", [
+        'middleware' => 'jwt.UserAuth',
+        'uses' => 'CountryController@getCountries'
+    ]);
+
+});
+
