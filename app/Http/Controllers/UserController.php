@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Classes\HttpStatus;
 use Illuminate\Support\Facades\DB;
-
+use Symfony\Component\Console\Helper\Table;
 
 class UserController extends Controller {
     /**
@@ -16,7 +16,11 @@ class UserController extends Controller {
      */
     public function getUser(Request $request, $id){
         // Récupérer les infos de l'utilsateur
-        $result = DB::select('SELECT idPersonne, prenom, nom, adresse, npa, typeCompte, email FROM Personne WHERE idPersonne = ?', [$id]);
+        $result = DB::table('Personne')
+        ->select('idPersonne', 'prenom', 'nom', 'adresse', 'npa', 'typeCompte', 'email', 'idPays', 'nomPays', 'code AS codePays')
+        ->join('Pays', 'idPersonnePays', '=', 'idPays')
+        ->where("idPersonne", "=", $id)->get();
+
         // Il existe un utilisateur avec cet email dans la base ?
         if(count($result) == 0) {
             $response = HttpStatus::NoDataFound404($request->getPathInfo());
@@ -60,12 +64,12 @@ class UserController extends Controller {
         }
 
         //On regarde si un utilisateur existe bien dans la bdd avec l'id du body
-        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
+        $result = DB::table('Personne')->select()->where('idPersonne', '=', $id)->get();
 
         // Il existe un utilisateur avec cet id dans la base ?
         if(count($result) == 0) {
-            $response = HttpStatus::AuthenticationError401($request->getPathInfo());
-            return response()->json($response, 401);
+            $response = HttpStatus::NoDataFound404($request->getPathInfo());
+            return response()->json($response, 404);
         }
 
         // Est-ce que l'utilisateur authentifié a le droit de modifier les informations de cet utilisateur ?
@@ -86,7 +90,11 @@ class UserController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::select('SELECT * FROM Personne WHERE idPersonne = ?', [$id]);
+        $result = DB::table('Personne')
+        ->select('idPersonne', 'prenom', 'nom', 'adresse', 'npa', 'typeCompte', 'email', 'idPays', 'nomPays', 'code AS codePays')
+        ->join('Pays', 'idPersonnePays', '=', 'idPays')
+        ->where("idPersonne", "=", $id)->get();
+
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 
@@ -110,7 +118,8 @@ class UserController extends Controller {
          !isset($parameters['prenom']) || 
          !isset($parameters['nom']) ||
          !isset($parameters['adresse']) ||
-         !isset($parameters['npa'])) {
+         !isset($parameters['npa']) ||
+         !isset($parameters['idPersonnePays'])) {
             $response = HttpStatus::InvalidRequest400($request->getPathInfo(), " : il manque un ou des paramètre(s)");
             return response()->json($response, 400);
         }
@@ -138,7 +147,11 @@ class UserController extends Controller {
             return response()->json($response, 400);
         }
 
-        $result = DB::table('Personne')->select()->where("idPersonne", "=", $id)->get();
+        $result = DB::table('Personne')
+        ->select('idPersonne', 'prenom', 'nom', 'adresse', 'npa', 'typeCompte', 'email', 'idPays', 'nomPays', 'code AS codePays')
+        ->join('Pays', 'idPersonnePays', '=', 'idPays')
+        ->where("idPersonne", "=", $id)->get();
+
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
             'data' => $result, 
