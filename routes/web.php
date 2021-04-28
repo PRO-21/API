@@ -32,7 +32,7 @@ $router->group(['prefix' => '/user'], function () use ($router) {
     ]);
 
     // id, prenom, nom, adresse, npa, typeCompte, email, [password]
-    $router->put("/", [
+    $router->patch("/", [
         'middleware' => 'jwt.UserAuth',
         'uses' => 'UserController@editUser'
     ]);
@@ -46,5 +46,11 @@ $router->group(['prefix' => '/cert'], function () use ($router) {
     ]);
 
     $router->get('/{id}', 'CertController@getCert');
+});
+
+//Correspond aux URL avec le préfix ./pays
+$router->group(['prefix' => '/country'], function () use ($router) {
+    $router->get('/', 'CountryController@getCountries');
+
 });
 

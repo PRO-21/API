@@ -13,7 +13,7 @@ L'application utilise des tokens d'accès [JWT](https://jwt.io/) pour l'authenti
 ```HTTP
 POST /api/auth
 Host: pro.simeunovic.ch:8022
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiQWxiZXJ0IER1cG9udGVsIiwiaWF0IjoxNjE5MTE5NzA5LCJleHAiOjE2MTkyMDYxMDl9.jv3YXysOmXL0u6dT71I1c1dTEm4LefzGH53ZtWnx7ok
 cache-control: no-cache
 ```
 
@@ -59,7 +59,7 @@ Permet d'obtenir un token à partir d'un login et mot de passe. Les identifiants
                     "code": 200,
                     "message": "OK",
                     "request": "/auth",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": {
                     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgyNjA1LCJleHAiOjE2MTgzODc0MDV9.fB0s1P79KP6XRtDW4aj9zYiZpxB3P48R6RlO8yFlla8"
@@ -75,7 +75,7 @@ Permet d'obtenir un token à partir d'un login et mot de passe. Les identifiants
 				"code": 400,
 				"message": "Requête invalide",
 				"request": "/api/auth",
-				"api-version": "1.0"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}		
@@ -89,7 +89,7 @@ Permet d'obtenir un token à partir d'un login et mot de passe. Les identifiants
 				"code": 401,
 				"message": "Erreur d'authentification : email ou mot de passe incorrect",
 				"request": "/api/auth",
-				"api-version": "1.0"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}		
@@ -126,7 +126,7 @@ Permet d'obtenir un nouveau token à partir d'un token existant. Utilisé lorsqu
                     "code": 200,
                     "message": "OK",
                     "request": "/auth",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": {
                     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwcm8yMS1qd3QiLCJ1c2VySWQiOjEsImZ1bGxuYW1lIjoiSmVhbiBEdXBvbnQiLCJhY2NvdW50VHlwZSI6InBybyIsImVtYWlsIjoiamVhbi5kdXBvbnRlbEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjViNzIyYjMwN2ZjZTZjOTQ0OTA1ZDEzMjY5MWQ1ZTRhMjIxNGI3ZmU5MmI3Mzg5MjBlYjNmY2UzYTkwNDIwYTE5NTExYzMwMTBhMGU3NzEyYjA1NGRhZWY1YjU3YmFkNTllY2JkOTNiMzI4MGYyMTA1NzhmNTQ3ZjRhZWQ0ZDI1IiwiaWF0IjoxNjE3NzgzMTM4LCJleHAiOjE2MTgzODc5Mzh9.05oz6hrQ5DJUyNblySYMcK5EgRwAoBUQIxoP2Y2Y4k8"
@@ -142,7 +142,7 @@ Permet d'obtenir un nouveau token à partir d'un token existant. Utilisé lorsqu
 				"code": 401,
 				"message": "Erreur d'authentification",
 				"request": "/api/auth",
-				"api-version": "1.0"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}
@@ -183,7 +183,7 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
                     "code": 200,
                     "message": "OK",
                     "request": "/user/1",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": {
                     "idPersonne": 1,
@@ -193,6 +193,9 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
                     "npa": "3001",
                     "typeCompte": "pro",
                     "email": "jean.dupontel@gmail.com"
+                    "idPays": "CHE",
+                    "nomPays": "Switzerland",
+                    "codePays": "CH"
                 },
                 "count": 1
             }
@@ -206,7 +209,7 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
 				"code": 403,
 				"message": "Accès interdit",
 				"request": "/api/user/2",
-				"api-version": "1"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}			
@@ -220,7 +223,7 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
 				"code": 404,
 				"message": "Aucune information trouvée",
 				"request": "/api/user/2",
-				"api-version": "1"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}
@@ -240,7 +243,8 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                 "adresse": "Rue de la Côte 56",
                 "npa": "2000",
                 "email": "albert.dupontel@bluewin.ch",
-                "motDePasse": "pass"
+                "motDePasse": "pass",
+                "idPersonnePays": "CHE"
             }
 
 + Response 200 (application/json)
@@ -256,7 +260,7 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                     "code": 200,
                     "message": "OK",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": [
                     {
@@ -267,7 +271,9 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                         "npa": "2000",
                         "typeCompte": "pro",
                         "email": "albert.dupontel@bluewin.ch",
-                        "motDePasse": "5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25"
+                        "idPays": "CHE",
+                        "nomPays": "Switzerland",
+                        "codePays": "CH"
                     }
                 ],
                 "count": 1
@@ -282,7 +288,7 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                     "code": 400,
                     "message": "Requête invalide : il manque un ou des paramètre(s)",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }
@@ -296,7 +302,7 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                     "code": 400,
                     "message": "Requête invalide : email incorrect",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }
@@ -310,13 +316,13 @@ L'API attribue automatiquement le type de compte (pro dans l'itération 1).
                     "code": 400,
                     "message": "Requête invalide : cet email est déjà utilisé",
                     "request": "/user/",
-                    "api-version": "1.1"
+                    "api-version": "1.2"
                 },
                 "data": null
             }
 
 ## Modification d'un utilisateur [/user/]
-### Modifie un utilisateur spécifique [PUT]
+### Modifie un utilisateur spécifique [PATCH]
 Les champs dans le Body peuvent être variable. On indique dans le body que les champs qui seront modifiés Par exemple, si un utilisateur souhaite mettre à jour son adresse, il faut indiquer dans le body `idPersonne` et `adresse`.
 Le premier champ dans Body doit être `idPersonne` (obligatoire) avec comme valeur un entier représentant l'id de l'utilisateur dans la bdd.
 Les champs permis dans le body sont les suivants :
@@ -327,10 +333,7 @@ Les champs permis dans le body sont les suivants :
 - `npa`
 - `email`
 - `motDePasse`
-
-::: warning
-La modification des informations `email` ou `motDePasse` entraine la non validité du token en cours. Cela signifie que si un de ces deux champs est modifié, il faudra que l'utilisateur s'authentifie à nouveau.
-:::
+- `idPersonnePays`
 
 ::: warning
 L'utilisateur authentifié dans le token doit être le même que l'id spécifié en paramètre. Autrement dit, un utilisateur ne peut modifier que ses propres infromations.
@@ -363,7 +366,7 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
                     "code": 200,
                     "message": "OK",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": [
                     {
@@ -374,7 +377,9 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
                         "npa": "3001",
                         "typeCompte": "pro",
                         "email": "jean.dupontel@gmail.com",
-                        "motDePasse": "5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25"
+                        "idPays": "CHE",
+                        "nomPays": "Switzerland",
+                        "codePays": "CH"
                     }
                 ],
                 "count": 1
@@ -389,24 +394,10 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
                     "code": 400,
                     "message": "Requête invalide",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }
-
-+ Response 401 (application/json)
-	
-    + Body
-
-            {		
-			  "status": {
-				"code": 401,
-				"message": "Erreur d'authentification",
-				"request": "/api/user",
-				"api-version": "1"
-			  },
-			  "data": null
-			}		
 
 + Response 403 (application/json)
 	
@@ -417,10 +408,24 @@ L'utilisateur authentifié dans le token doit être le même que l'id spécifié
 				"code": 403,
 				"message": "Accès interdit",
 				"request": "/api/user",
-				"api-version": "1"
+				"api-version": "1.2"
 			  },
 			  "data": null
-			}			
+            }
+
++ Response 404 (application/json)
+	
+    + Body
+
+            {		
+			  "status": {
+				"code": 404,
+				"message": "Aucune information trouvée",
+				"request": "/api/user/",
+				"api-version": "1.2"
+			  },
+			  "data": null
+			}		
 			
 # Group Certificat
 
@@ -467,7 +472,7 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                     "code": 200,
                     "message": "OK",
                     "request": "/cert/Y0Ez39NKLZ",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": {
                     "idCertificat": "Y0Ez39NKLZ",
@@ -505,7 +510,7 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                     "code": 400,
                     "message": "Requête invalide : il manque un ou des paramètre(s)",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }	
@@ -519,7 +524,7 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                     "code": 400,
                     "message": "Requête invalide : la date doit être au format yyyy-mm-dd",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }	
@@ -533,7 +538,7 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                     "code": 400,
                     "message": "Requête invalide : vous n'avez pas renseigné de champs",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }	
@@ -547,7 +552,7 @@ Le champ du body `dateSignature` est obligatoire et doit être au format yyyy-mm
                     "code": 400,
                     "message": "Requête invalide",
                     "request": "/user/",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": null
             }	
@@ -574,7 +579,7 @@ Utilisé lors du scan d'un document.
                     "code": 200,
                     "message": "OK",
                     "request": "/cert/Y0Ez39NKLZ",
-                    "api-version": "1.0"
+                    "api-version": "1.2"
                 },
                 "data": {
                     "idCertificat": "Y0Ez39NKLZ",
@@ -613,10 +618,86 @@ Utilisé lors du scan d'un document.
 				"code": 404,
 				"message": "Aucune information trouvée",
 				"request": "/api/cert/wrongid",
-				"api-version": "1"
+				"api-version": "1.2"
 			  },
 			  "data": null
 			}
+
+# Group Pays
+
+Resources relatives aux pays.
+
+## Récupération des pays [/country/]
+
+### Récupérer des pays [GET]
+Permet de récupérer tous les pays.
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /country
+	
+	+ Body
+			
+			{
+                "status": {
+                    "code": 200,
+                    "message": "OK",
+                    "request": "/country",
+                    "api-version": "1.2"
+                },
+                "data": [
+                    {
+                        "idPays": "ABW",
+                        "nomPays": "Aruba",
+                        "code": "AW"
+                    },
+                    {
+                        "idPays": "AFG",
+                        "nomPays": "Afghanistan",
+                        "code": "AF"
+                    },
+                    {
+                        "idPays": "AGO",
+                        "nomPays": "Angola",
+                        "code": "AO"
+                    },
+                    {
+                        "idPays": "AIA",
+                        "nomPays": "Anguilla",
+                        "code": "AI"
+                    },
+                    {
+                        "idPays": "ALA",
+                        "nomPays": "Åland",
+                        "code": "AX"
+                    },
+                    {
+                        "idPays": "ALB",
+                        "nomPays": "Albania",
+                        "code": "AL"
+                    },
+                    ...
+                    {
+                        "idPays": "ZAF",
+                        "nomPays": "South Africa",
+                        "code": "ZA"
+                    },
+                    {
+                        "idPays": "ZMB",
+                        "nomPays": "Zambia",
+                        "code": "ZM"
+                    },
+                    {
+                        "idPays": "ZWE",
+                        "nomPays": "Zimbabwe",
+                        "code": "ZW"
+                    }
+                ],
+                "count": 250
+            }
+
 
 # Group Erreurs
 
