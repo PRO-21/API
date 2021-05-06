@@ -1,9 +1,12 @@
 <?php
 
 use Laravel\Lumen\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\DB;
 
 abstract class TestCase extends BaseTestCase
 {
+    public $testUserId;
+
     /**
      * Creates the application.
      *
