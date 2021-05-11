@@ -88,7 +88,7 @@ class CertController extends Controller {
         // Récupérer l'utilisateur ayant créé ce certificat
         $issuer = DB::table('Personne')->select('prenom', 'nom')->where('idPersonne', '=', $result[0]->idPersonnePersonne)->get()->first();
         // Récupérer les champs du certificat
-        $fields = DB::table('Champ')->select('nom', 'valeur')->where('idCertificatCertificat', '=', $id)->get();
+        $fields = DB::table('Champ')->orderBy('ordre')->select('nom', 'valeur')->where('idCertificatCertificat', '=', $id)->get();
 
         // Pour chaque champs récupéré, déchiffrer sa valeur
         foreach($fields as $field) {
@@ -103,7 +103,7 @@ class CertController extends Controller {
         $data = [ 'idCertificat' => $result[0]->idCertificat,
                   'dateSignature' => $result[0]->dateSignature,
                   'signataire' =>  $issuer,
-                   'champs' => $fields ];
+                  'champs' => $fields ];
 
         $response = [
             'status' => HttpStatus::NoError200($request->getPathInfo()), 
