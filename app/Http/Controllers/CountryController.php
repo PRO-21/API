@@ -16,7 +16,7 @@ class CountryController extends Controller {
      */
     public function getCountries(Request $request) {
         // Récupérer les pays
-        $result = DB::table('Pays')->select()->get();
+        $result = DB::table('Pays')->select()->orderBy('nomPays')->get();
 
         //Retourne les pays
         $response = [
